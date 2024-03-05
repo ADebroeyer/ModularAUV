@@ -1,4 +1,4 @@
-# Verwerkt uit het boek
+# General notes progress master 1 project
 
 ## Meeting notes 21/02
 
