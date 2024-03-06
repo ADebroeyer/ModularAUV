@@ -29,7 +29,12 @@
 3. More complex AUV, is another AUV in another model
 4. More generally deadlines hand in and presentation ? 
 5. What should be included in the report ? (Literatuurstudie, state of the art ?)
-6. Could there be a way to get chapter 8 of the 2021 book ? 
+6. Could there be a way to get chapter 8 of the 2021 book ?
+7. Unit quaternion vs Euler angles representation
+8. Based on Remus, so modularity around a spheroid submarine ? 
+9. Is modularity: parameters in a mask or more Simulink blocks ? 
+10. Damping in the model uses different fixed time constants, what would be the ways to recalculate them. 
+11. Good test conditions for verification
 
 
 ## Plan
@@ -69,6 +74,8 @@
 * Remus
     * begrijpen
     * Hermaken
+    * Wat is r44 added moment inertia ? uitzoeken ?
+    * Damping matrix is based on time constants, do time constants need to be recalculated how would this be posible?
 * Modulair SIMULINK model
 
 ### Progress
@@ -80,6 +87,15 @@
    1. Ziet er interessant uit, maar code ingewikkelder
    2. Beginnen bij de Remus
 3. Begin bij het gewoon kopiëren van de remus 
+4. Modularity
+   1. Posibilities
+      1. Saturation values
+      2. Length, Diameter, other shape then spheroid ? 
+      3. Moving CG and CB
+      4. Drag coefficient, based on fluid maybe ? 
+      5. Amount of blades and blade properties ? 
+      6. rudder/ster_plane parameters (maybe with a dimension input) ?
+      7. Lattitude ? 
 
 
 

@@ -28,6 +28,7 @@ if (abs(delta_r) > max_ui(1)), delta_r = sign(delta_r) * max_ui(1); end
 if (abs(delta_s) > max_ui(2)), delta_s = sign(delta_s) * max_ui(2); end
 if (abs(n)       > max_ui(3)), n = sign(n) * max_ui(3); end
 
+Dnu = [0 0 0 0 0 0]';   % Change due to no currents
 U  = sqrt( nu(1)^2 + nu(2)^2 + nu(3)^2 );         % speed (m/s)
 
 % AUV model parameters; Fossen (2021, Section 8.4.2) and Allen et al. (2000)
@@ -153,7 +154,7 @@ tau(5) = x_s * Z_s;
 tau(6) = x_r * Y_r;
 
 % State-space model
-xdot = [ nu + M \ ...
+xdot = [ Dnu + M \ ...
             (tau + tau_liftdrag + tau_crossflow - C * nu - D * nu  - g)
          J * nu ]; 
 end
