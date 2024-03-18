@@ -1,4 +1,11 @@
-function [M, C, D, tau_liftdrag, tau_crossflow, J, g] = payload(shape, L_auv, D_auv,nu, nu_r, x)
+function [M, C, D, tau_liftdrag, tau_crossflow, J, g] = payload(nu, nu_r, x)
+% function for the payload module calculating the 
+% Called in main_modular.m
+
+S = load("PayloadParameters.mat");
+payload = S.payload;
+
+% declaration of the sizes of the variables for C compilation in SIMULINK
 M = zeros(6,6);
 C = zeros(6,6); 
 D = zeros(6,6); 
@@ -18,13 +25,14 @@ g_mu = gravity(mu);     % gravity vector (m/s2)
 
 alpha = atan2( nu_r(3), nu_r(1) );                % angle of attack (rad)
 
-if shape == 'spheroid'
-
+if payload.shape == 'spheroid'
     % L_auv = AUV length (m)
     % D_auv = AUV diamater (m)
-    S = 0.7 * L_auv * D_auv; % planform area S = 70% of rectangle L_auv * D_auv
-    a = L_auv/2;             % spheroid semi-axes a and b
-    b = D_auv/2;                  
+    % planform area S = 70% of rectangle L_auv * D_auv
+    S = 0.7 * payload.L_auv * payload.D_auv; 
+
+    a = payload.L_auv/2;    % spheroid semi-axes a and b
+    b = payload.D_auv/2;                  
     r44 = 0.3;               % added moment of inertia in roll: A44 = r44 * Ix
     r_bg = [ 0 0 0.02 ]';    % CG w.r.t. to the CO
     r_bb = [ 0 0 0 ]';       % CB w.r.t. to the CO
@@ -63,8 +71,8 @@ if shape == 'spheroid'
     D(1,1) = D(1,1) * exp(-3*U_r);   % vanish at high speed where quadratic
     D(2,2) = D(2,2) * exp(-3*U_r);   % drag and lift forces dominates
 
-    tau_liftdrag = forceLiftDrag(D_auv,S,CD_0,alpha,U_r);
-    tau_crossflow = crossFlowDrag(L_auv,D_auv,D_auv,nu_r);
+    tau_liftdrag = forceLiftDrag(payload.D_auv,S,CD_0,alpha,U_r);
+    tau_crossflow = crossFlowDrag(payload.L_auv,payload.D_auv,payload.D_auv,nu_r);
     
     % J,R           rotation matrices
     [J,R] = eulerang(x(10),x(11),x(12));

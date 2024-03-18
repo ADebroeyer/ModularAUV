@@ -7,7 +7,7 @@ function [xdot,U] = main_Modular(x,ui,Vc,betaVc,w_c)
 % tau           propulsion
 % tau_liftdrag  hydrodynamic lift and drag forces of a submerged 
 %               "wing profile" for varying angle of attack
-%t au_crossflow  cross-flow drag integrals for
+% t au_crossflow  cross-flow drag integrals for
 %               a marine craft using strip theory.
 % C             mass + hydrodynamic added damping
 %               CA-terms in roll, pitch and yaw can destabilize the model if quadratic
@@ -20,7 +20,7 @@ function [xdot,U] = main_Modular(x,ui,Vc,betaVc,w_c)
 % xdot
 % nu            state vector: x(1:6)
 
-S = load("ModelParameters.mat");
+% S = load("ModelParameters.mat"); % 
 
 if (nargin == 2), Vc = 0; betaVc = 0; w_c = 0; end  % no ocean currents
 
@@ -48,12 +48,12 @@ U  = sqrt( nu(1)^2 + nu(2)^2 + nu(3)^2 );         % speed (m/s)
 
 %% Constructing the body/payload
 
-[M, C, D, tau_liftdrag, tau_crossflow, J, g]  = payload(S.shape, S.L_auv, S.D_auv,nu,nu_r, x);
+[M, C, D, tau_liftdrag, tau_crossflow, J, g]  = payload(nu,nu_r, x);
 
 
 %% Constructing propellors
 
-[F_prop, M_prop] = propellor(S.locations, S.directions, S.masses_prop, speeds, S.n_max,rho,U);
+[F_prop, M_prop] = propellor( speeds ,rho,U);
 
 
 %% Constructing rudders
@@ -67,12 +67,12 @@ U  = sqrt( nu(1)^2 + nu(2)^2 + nu(3)^2 );         % speed (m/s)
 % B = W; balast function still has to be implemented
 
 %% Propulsion vector
-t_prop = 0.1;    % thrust deduction number
+
 % Generalized propulsion force vector
 tau = zeros(6,1);                                
-tau(1) = (1-t_prop) * F_prop(1);
-tau(2) = (1-t_prop) * F_prop(2) ;
-tau(3) = (1-t_prop) * F_prop(3) ;
+tau(1) = F_prop(1);
+tau(2) = F_prop(2) ;
+tau(3) = F_prop(3) ;
 tau(4) = M_prop(1);  % scaled down by a factor of 10 to match exp. results
 tau(5) = M_prop(2);
 tau(6) = M_prop(3);

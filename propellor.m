@@ -1,12 +1,18 @@
-function [F_prop, M_prop] = propellor(locations, directions, masses_prop, speeds, speeds_max,rho,U)
-    X_prop = zeros(size(speeds));
-    K_prop = zeros(size(speeds));
+function [F_prop, M_prop] = propellor(speeds, rho,U)
+% function for making the different propellors 
+% called in main_modular
+    
+S = load("PropParameters.mat");
+prop = S.prop;
+
+X_prop = zeros(size(speeds));
+K_prop = zeros(size(speeds));
     
     for i=1:length(speeds)
         n = speeds(i);
         % Amplitude saturation of the control signals
-        n_max = 1525;        % maximum propeller rpm        
-        if (abs(n) > speeds_max(i)), n = sign(n) * speeds_max(i); end
+        prop.n_max = 1525;        % maximum propeller rpm        
+        if (abs(n) > prop.n_max(i)), n = sign(n) * prop.n_max(i); end
         
         %%%%%%%%% TO DO deze ingeven door de user
         % Propeller coeffs. KT and KQ are computed as a function of advance no.
@@ -45,11 +51,13 @@ function [F_prop, M_prop] = propellor(locations, directions, masses_prop, speeds
                     
         end   
        
-        F_prop = X_prop .* directions; % Should we also account for the orientation of the vehicle (x)?
+        t_prop = 0.1;    % thrust deduction number
+
+        F_prop = (1-t_prop)*X_prop .* prop.directions; % Should we also account for the orientation of the vehicle (x)?
 
         M_prop = zeros(3,length(speeds));
-        for i=1:length(masses_prop)
-            M_prop(:,i) = K_prop/10 .* directions + -X_prop * (cross(locations(:,i),directions(:,i)));
+        for i=1:length(prop.masses)
+            M_prop(:,i) = K_prop/10 .* prop.directions + -X_prop * (cross(prop.locations(:,i),prop.directions(:,i)));
         end % Scaled with a factor of 10 to match experimental results
                 % Te kijken of kolommen of rijen
         F_prop = sum(F_prop,2);

@@ -7,7 +7,6 @@ x = [0 0 0 0 0 0 0 0 0 0 0 0]';
 
 ui = [0 0 1500]';
 
-
 %% USER INPUTS
 h  = 0.02;                 % sample time (s)
 N  = 50;                 % number of samples
