@@ -35,6 +35,7 @@
 9. Is modularity: parameters in a mask or more Simulink blocks ? 
 10. Damping in the model uses different fixed time constants, what would be the ways to recalculate them. 
 11. Good test conditions for verification
+12. What about ballast ? 
 
 
 ## Plan
@@ -81,7 +82,7 @@
 ### Progress
 
 0. Done
-1. Done
+1. Done --> boek komt ooit aan in bib
    1. minder aandacht aan de latere delen
 2. NPSAUV
    1. Ziet er interessant uit, maar code ingewikkelder
@@ -99,3 +100,16 @@
 
 
 
+modular --> for design and simulation
+
+shape
+dimensions
+weight
+
+propellors --> this place and this position
+
+blocks
+
+
+
+report explain hydrostatics and hydrodynamics and explain that we do a simplification by describing it with masses. 

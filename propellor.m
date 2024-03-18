@@ -1,26 +1,17 @@
-function [mass, I_prop_tot, CoG, X_prop, K_prop] = propellor(locations, directions, masses, I0_mat, n, n_max)
-    
-    
-    
-    
-    
-    
-    % misschien opsplitsen in eerste run en tweede
-    
-    
+function [F_prop, M_prop] = propellor(locations, directions, masses_prop, speeds, speeds_max,rho,U)
+    X_prop = zeros(size(speeds));
+    K_prop = zeros(size(speeds));
     
     for i=1:length(speeds)
-        
+        n = speeds(i);
         % Amplitude saturation of the control signals
-        n_max = 1525;                                   % maximum propeller rpm
-        
-        if (abs(n) > max_ui(3)), n = sign(n) * max_ui(3); end
+        n_max = 1525;        % maximum propeller rpm        
+        if (abs(n) > speeds_max(i)), n = sign(n) * speeds_max(i); end
         
         %%%%%%%%% TO DO deze ingeven door de user
         % Propeller coeffs. KT and KQ are computed as a function of advance no.
         % Ja = Va/(n*D_prop) where Va = (1-w)*U = 0.944 * U; Allen et al. (2000)
         D_prop = 0.14;   % propeller diameter corresponding to 5.5 inches
-        t_prop = 0.1;    % thrust deduction number
         Va = 0.944 * U;  % advance speed (m/s)
         
         
@@ -42,63 +33,28 @@ function [mass, I_prop_tot, CoG, X_prop, K_prop] = propellor(locations, directio
         % KQ ~= KQ_0 + (KQ_max-KQ_0)/Ja_max * Ja        
         if n > 0   % forward thrust
         
-            X_prop = rho * D_prop^4 * (... 
+            X_prop(i) = rho * D_prop^4 * (... 
                 KT_0 * abs(n) * n + (KT_max-KT_0)/Ja_max * (Va/D_prop) * abs(n) );        
-            K_prop = rho * D_prop^5 * (...
+            K_prop(i) = rho * D_prop^5 * (...
                 KQ_0 * abs(n) * n + (KQ_max-KQ_0)/Ja_max * (Va/D_prop) * abs(n) );           
                     
         else       % reverse thrust (braking)
                 
-            X_prop = rho * D_prop^4 * KT_0 * abs(n) * n; 
-            K_prop = rho * D_prop^5 * KQ_0 * abs(n) * n;
+            X_prop(i) = rho * D_prop^4 * KT_0 * abs(n) * n; 
+            K_prop(i) = rho * D_prop^5 * KQ_0 * abs(n) * n;
                     
         end   
-    
-        % inspired by spheroid
-        O3 = zeros(3,3);
-        % moment of inertia
-        Ix = 0;
-        Iy = 0;
-        Iz = 0;
-        Ig = diag([Ix Iy Iz]);
-        
-        nu2 = [0 0];
-    
-        % rigid-body matrices expressed in the CG
-        MRB_CG = diag([ m m m Ix Iy Iz ]);
-        CRB_CG = [ m * Smtrx(nu2)    O3
-               O3               -Smtrx(Ig*nu2) ];
-        
-        
-    
-    if n > 0   % forward thrust
-    
-        X_prop = rho * D_prop^4 * (... 
-            KT_0 * abs(n) * n + (KT_max-KT_0)/Ja_max * (Va/D_prop) * abs(n) );        
-        K_prop = rho * D_prop^5 * (...
-            KQ_0 * abs(n) * n + (KQ_max-KQ_0)/Ja_max * (Va/D_prop) * abs(n) );           
-                
-    else       % reverse thrust (braking)
-            
-        X_prop = rho * D_prop^4 * KT_0 * abs(n) * n; 
-        K_prop = rho * D_prop^5 * KQ_0 * abs(n) * n;
-                
-    end
-    
+       
+        F_prop = X_prop .* directions; % Should we also account for the orientation of the vehicle (x)?
 
-    
-    end
-    
-    % Calculating the masses and inertias
-    
-    mass = sum(masses);
-    CoG = center_oG(locations,masses);
-    
-    I_mat = [];
-    for i = 1:length(masses)
-        I_mat(i) = steiner(I0_mat(i),masses(i),locations(i)); % Miscchien moet het hier - locations zijn
-    end
-    I_prop_tot = I_tot(I_mat);
+        M_prop = zeros(3,length(speeds));
+        for i=1:length(masses_prop)
+            M_prop(:,i) = K_prop/10 .* directions + -X_prop * (cross(locations(:,i),directions(:,i)));
+        end % Scaled with a factor of 10 to match experimental results
+                % Te kijken of kolommen of rijen
+        F_prop = sum(F_prop,2);
+        M_prop = sum(M_prop,2);
 
+    end
 
 end

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+<head>
+</head>
+<!--Copyright 1998-2019 HUMUSOFT s.r.o. and The MathWorks, Inc.-->
+<Scene>
+<WorldInfo title='Wavy Sea' info='"ElevationGrid point heights animated using a script." '>
+</WorldInfo>
+<NavigationInfo visibilityLimit='100000' type='"FLY" "ANY" ' speed='100' headlight='false'>
+</NavigationInfo>
+<Background groundAngle='0.8 1.4 1.57' groundColor='0.120948 0.111678 0.7 0.215381 0.0622425 0.7 0.0965036 0.0922272 0.7 0 0.02 0.9' skyAngle='0.9 1.5 1.57' skyColor='0 0.2 0.7 0 0.5 0.7 0 0.5 1 0 1 1'>
+</Background>
+<DirectionalLight direction='1 -2 1' intensity='0.8'>
+</DirectionalLight>
+<DirectionalLight direction='-1 -2 -1' intensity='0.8'>
+</DirectionalLight>
+<Transform translation='-1000 100 0' rotation='0 1 0 -1.5708'>
+  <Viewpoint description='View 1' orientation='1 0 0 0'>
+  </Viewpoint>
+</Transform>
+<Transform DEF='Waves'  scale='500 2 500'>
+  <Transform DEF='Grid1'  translation='-5.5 0 -5.5'>
+    <Shape>
+      <Appearance>
+        <Material DEF='Water'  transparency='0.4' specularColor='0.93 0.93 0.93' diffuseColor='0.177 0.397 1' ambientIntensity='0.5'>
+        </Material>
+      </Appearance>
+      <ElevationGrid DEF='Grid'  zDimension='12' xDimension='12' height='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0' creaseAngle='2.04'>
+      </ElevationGrid>
+    </Shape>
+    <TimeSensor DEF='TIMER'  cycleInterval='6' loop='true' startTime='1'>
+    </TimeSensor>
+  </Transform>
+  <Script DEF='WAVYSCRIPT'  directOutput='false' mustEvaluate='false'>
+  <field name='dist' type='MFFloat' accessType='initializeOnly' value='7.77817 7.10634 6.5192 6.04152 5.70088 5.52268 5.52268 5.70088 6.04152 6.5192 7.10634 7.77817 7.10634 6.36396 5.70088 5.14782 4.74342 4.52769 4.52769 4.74342 5.14782 5.70088 6.36396 7.10634 6.5192 5.70088 4.94975 4.30116 3.80789 3.53553 3.53553 3.80789 4.30116 4.94975 5.70088 6.5192 6.04152 5.14782 4.30116 3.53553 2.91548 2.54951 2.54951 2.91548 3.53553 4.30116 5.14782 6.04152 5.70088 4.74342 3.80789 2.91548 2.12132 1.58114 1.58114 2.12132 2.91548 3.80789 4.74342 5.70088 5.52268 4.52769 3.53553 2.54951 1.58114 0.707107 0.707107 1.58114 2.54951 3.53553 4.52769 5.52268 5.52268 4.52769 3.53553 2.54951 1.58114 0.707107 0.707107 1.58114 2.54951 3.53553 4.52769 5.52268 5.70088 4.74342 3.80789 2.91548 2.12132 1.58114 1.58114 2.12132 2.91548 3.80789 4.74342 5.70088 6.04152 5.14782 4.30116 3.53553 2.91548 2.54951 2.54951 2.91548 3.53553 4.30116 5.14782 6.04152 6.5192 5.70088 4.94975 4.30116 3.80789 3.53553 3.53553 3.80789 4.30116 4.94975 5.70088 6.5192 7.10634 6.36396 5.70088 5.14782 4.74342 4.52769 4.52769 4.74342 5.14782 5.70088 6.36396 7.10634 7.77817 7.10634 6.5192 6.04152 5.70088 5.52268 5.52268 5.70088 6.04152 6.5192 7.10634 7.77817'/>
+  <field name='fraction' type='SFFloat' accessType='inputOnly'/>
+  <field name='height' type='MFFloat' accessType='outputOnly'/>
+  <![CDATA[vrmlscript: 
+   function initialize() {
+
+    xCenter = (12 * 1)/2; // xDimension * xSize
+    zCenter = (12 * 1)/2; // xDimension * xSize
+
+    for (i = 0; i < 12; i++)
+    {
+     for (j = 0; j < 12; j++)
+     {
+      dist[i*12+j] = Math.sqrt((5.5 - i)*(5.5 - i) + (5.5 - j)*(5.5 - j));
+     }
+    }
+   }
+
+   function fraction (value) {
+
+    for (i = 0; i < 12; i++)
+    {
+     for (j = 0; j < 12; j++)
+     {     // 5.5 * 1.414 / 2 = half max height = 3.535
+      height[i*12+j] = Math.sin((6.28*value)-dist[i*12+j]);
+     }
+    }
+   }
+   
+  
+  
+  
+  ]]>
+  </Script>
+</Transform>
+<Transform scale='30 30 30' rotation='0 0 1 1.5'>
+  <Shape>
+    <Appearance>
+      <Material diffuseColor='1 0.2 0.2'>
+      </Material>
+    </Appearance>
+    <Cylinder radius='1.5' height='8'>
+    </Cylinder>
+  </Shape>
+</Transform>
+<Transform>
+</Transform>
+<ROUTE fromNode='TIMER' fromField='fraction_changed' toNode='WAVYSCRIPT' toField='fraction'/>
+
+<ROUTE fromNode='WAVYSCRIPT' fromField='height' toNode='Grid' toField='set_height'/>
+
+</Scene>
+</X3D>

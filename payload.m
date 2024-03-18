@@ -1,8 +1,22 @@
-function [M, C, m, D, tau_liftdrag, tau_crossflow, CD_0] = payload(shape, L_auv, D_auv, mass, CoG, I)
+function [M, C, D, tau_liftdrag, tau_crossflow, J, g] = payload(shape, L_auv, D_auv,nu, nu_r, x)
+M = zeros(6,6);
+C = zeros(6,6); 
+D = zeros(6,6); 
+J = zeros(6,6);
+g = zeros(6,1);
+tau_liftdrag = zeros (6,1);
+tau_crossflow = zeros (6,1);
 
+
+U_r = sqrt( nu_r(1)^2 + nu_r(2)^2 + nu_r(3)^2 );  % relative speed (m/s)
 
 % AUV model parameters; Fossen (2021, Section 8.4.2) and Allen et al. (2000)
 
+% constants
+mu = 63.446827;         % Lattitude for Trondheim, Norway (deg)
+g_mu = gravity(mu);     % gravity vector (m/s2)
+
+alpha = atan2( nu_r(3), nu_r(1) );                % angle of attack (rad)
 
 if shape == 'spheroid'
 
@@ -51,5 +65,10 @@ if shape == 'spheroid'
 
     tau_liftdrag = forceLiftDrag(D_auv,S,CD_0,alpha,U_r);
     tau_crossflow = crossFlowDrag(L_auv,D_auv,D_auv,nu_r);
+    
+    % J,R           rotation matrices
+    [J,R] = eulerang(x(10),x(11),x(12));
 
+    % Restoring forces and moments
+    g = gRvect(W,B,R,r_bg,r_bb);
 end

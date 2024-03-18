@@ -1,4 +1,4 @@
-function [X_r,X_s,Y_r,Z_s] = rudders(sat)
+function [X_r,X_s,Y_r,Z_s] = rudders(sat,rho)
 
     % Tail rudder
     CL_delta_r = 0.5;        % rudder lift coefficient (-)

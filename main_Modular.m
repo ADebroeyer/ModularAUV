@@ -1,20 +1,19 @@
 function [xdot,U] = main_Modular(x,ui,Vc,betaVc,w_c)
 
-load("ModelParameters.mat") % Loades the model parameters
+S = load("ModelParameters.mat");
 
 if (nargin == 2), Vc = 0; betaVc = 0; w_c = 0; end  % no ocean currents
 
 %% Constants
-mu = 63.446827;         % Lattitude for Trondheim, Norway (deg)
-g_mu = gravity(mu);     % gravity vector (m/s2)
 rho = 1026;             % density of water (m/s2)
 
 %% State vectors and control inputs
 nu = x(1:6); 
 eta = x(7:12);
-delta_r = ui(1);        % tail rudder (rad)
-delta_s = ui(2);        % stern plane (rad)
-n = ui(3)/60;           % propeller revolution (rps)
+% commented untill rudder is added
+% delta_r = ui(1);        % tail rudder (rad)
+% delta_s = ui(2);        % stern plane (rad)
+speeds = ui(3)/60;        % propeller revolution (rps)
 
 %% Ocean currents and relative speed
 u_c = Vc * cos( betaVc - eta(6) );                               
@@ -25,37 +24,38 @@ Dnu_c = [nu(6)*v_c -nu(6)*u_c 0 0 0 0]';      % time derivative of nu_c
 
 % Relative velocities/speed, angle of attack and vehicle speed
 nu_r = nu - nu_c;                                 % relative velocity
-alpha = atan2( nu_r(3), nu_r(1) );                % angle of attack (rad)
-U_r = sqrt( nu_r(1)^2 + nu_r(2)^2 + nu_r(3)^2 );  % relative speed (m/s)
 U  = sqrt( nu(1)^2 + nu(2)^2 + nu(3)^2 );         % speed (m/s)
 
 %% Constructing the body/payload
 
-payload(shape, L_auv, D_auv)
+[M, C, D, tau_liftdrag, tau_crossflow, J, g]  = payload(S.shape, S.L_auv, S.D_auv,nu,nu_r, x);
 
 
 %% Constructing propellors
 
-propellor(locations, directions, masses, I0_mat, n, n_max)
+[F_prop, M_prop] = propellor(S.locations, S.directions, S.masses_prop, speeds, S.n_max,rho,U);
+
 
 %% Constructing rudders
 
-% gecomment voor testen nu 
+% commented for testing
 % rudders(sat)
 
+%% Balast 
+
+% commented for testing
+% B = W; balast function still has to be implemented
+
 %% Propulsion vector
-
-% TODO: plaatst dit deels in de apparte bestanden
-[J,R] = eulerang(x(10),x(11),x(12));
-
+t_prop = 0.1;    % thrust deduction number
 % Generalized propulsion force vector
 tau = zeros(6,1);                                
-tau(1) = (1-t_prop) * X_prop + X_r + X_s;
-tau(2) = Y_r;
-tau(3) = Z_s;
-tau(4) = K_prop / 10;  % scaled down by a factor of 10 to match exp. results
-tau(5) = x_s * Z_s;
-tau(6) = x_r * Y_r;
+tau(1) = (1-t_prop) * F_prop(1);
+tau(2) = (1-t_prop) * F_prop(2) ;
+tau(3) = (1-t_prop) * F_prop(3) ;
+tau(4) = M_prop(1);  % scaled down by a factor of 10 to match exp. results
+tau(5) = M_prop(2);
+tau(6) = M_prop(3);
 
 %% State-space model
 
@@ -72,12 +72,12 @@ tau(6) = x_r * Y_r;
 % nu_r          relative velocity
 % D             linear damping matrix for marine craft
 % J,R           rotation matrices
-[J,R] = eulerang(x(10),x(11),x(12));
 % g             vector of restoring 
 %               forces about an arbitrarily point CO for a submerged body
-g = gRvect(W,B,R,r_bg,r_bb);
+% % % % g = gRvect(W,B,R,r_bg,r_bb); % commented for now and removed from
+% xdot
 % nu            state vector: x(1:6)
 
 xdot = [ Dnu_c + M \ ...
-            (tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r  - g)
+            (tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r - g)
          J * nu ]; 
