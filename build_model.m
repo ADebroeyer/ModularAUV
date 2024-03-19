@@ -11,18 +11,19 @@ if ModularModel == "y"
 % 1. amout of props, loc. , dir. 
 % 2. payload shape, dimensions, weight eventualy 
 
-i_props = input("How many propellors ?","s");
+i_props = input("How many propellors ?");
 
-prop.locations = zeros(i_props,1);prop.directions = zeros(i_props,1);
-prop.masses = zeros(i_props,1);prop.max_speeds = zeros(i_props,1);
+prop.locations = zeros(3,i_props);  prop.directions = zeros(3,i_props);
+prop.masses = zeros(1,i_props);     prop.I0_mat = zeros(3);
+prop.max_speeds = zeros(1,i_props);
 for i=1:i_props
     location = input(sprintf("Location of propellor %d ?", i));
     direction = input(sprintf("Direction of propellor %d ?", i));
     mass = input(sprintf("Mass of propellor %d ?", i));
     n_max = input(sprintf("Maximal speed of the propellor %d ?", i));
 
-    prop.locations(i) = location;
-    prop.directions(i) = direction;
+    prop.locations(:,1) = location;
+    prop.directions(:,1) = direction;
     prop.masses(i) = mass;
     prop.max_speeds(i) = n_max;
 end
@@ -30,8 +31,8 @@ end
 payload.shape = input("Choose a payload shape from the list: [spheroid]","s");
 
 if payload.shape == "spheroid"
-    payload.L_auv = input("Insert the length of the payload in m");
-    payload.L_auv = input("Insert the diameter of the payload in m");
+    payload.L_auv = input("Insert the length of the payload in m ");
+    payload.D_auv = input("Insert the diameter of the payload in m ");
 else
     disp("Selected shape not available")
 end
@@ -48,7 +49,7 @@ prop.locations = [[0,0,0]']; % locations of the propellors
 prop.directions = [[1,0,0]']; % directions of the propellors (direction of flow)
 prop.masses = [0]; % masses
 prop.I0_mat = zeros(3);
-prop.speeds_max = 1525; % saturation of propellor
+prop.max_speeds = 1525; % saturation of propellor
 
 m = 0;
 

@@ -11,8 +11,8 @@ K_prop = zeros(size(speeds));
     for i=1:length(speeds)
         n = speeds(i);
         % Amplitude saturation of the control signals
-        prop.n_max = 1525;        % maximum propeller rpm        
-        if (abs(n) > prop.n_max(i)), n = sign(n) * prop.n_max(i); end
+        prop.speeds_max = 1525;        % maximum propeller rpm        
+        if (abs(n) > prop.max_speeds(i)), n = sign(n) * prop.max_speeds(i); end
         
         %%%%%%%%% TO DO deze ingeven door de user
         % Propeller coeffs. KT and KQ are computed as a function of advance no.
