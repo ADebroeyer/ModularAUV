@@ -16,14 +16,17 @@ i_props = input("How many propellors ?");
 prop.locations = zeros(3,i_props);  prop.directions = zeros(3,i_props);
 prop.masses = zeros(1,i_props);     prop.I0_mat = zeros(3);
 prop.max_speeds = zeros(1,i_props);
+
 for i=1:i_props
     location = input(sprintf("Location of propellor %d ?", i));
     direction = input(sprintf("Direction of propellor %d ?", i));
     mass = input(sprintf("Mass of propellor %d ?", i));
     n_max = input(sprintf("Maximal speed of the propellor %d ?", i));
+    
+
 
     prop.locations(:,1) = location;
-    prop.directions(:,1) = direction;
+    prop.directions(:,1) = direction/norm(direction);
     prop.masses(i) = mass;
     prop.max_speeds(i) = n_max;
 end
@@ -43,13 +46,13 @@ clear;
 
 
 % Propellors
-prop.locations = [[0,0,0]']; % locations of the propellors
+prop.locations = [[0,0,0]'];    % locations of the propellors
 % directions also with angles
 % Normalize it
-prop.directions = [[1,0,0]']; % directions of the propellors (direction of flow)
-prop.masses = [0]; % masses
+prop.directions = [[1,0,0]'];   % directions of the propellors (direction of flow)
+prop.masses = [0];              % masses
 prop.I0_mat = zeros(3);
-prop.max_speeds = 1525; % saturation of propellor
+prop.max_speeds = 1525;         % saturation of propellor
 
 m = 0;
 

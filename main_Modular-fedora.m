@@ -71,44 +71,12 @@ U  = sqrt( nu(1)^2 + nu(2)^2 + nu(3)^2 );         % speed (m/s)
 % Generalized propulsion force vector
 tau = zeros(6,1);                                
 tau(1) = F_prop(1);
-tau(2) = F_prop(2) ;
-tau(3) = F_prop(3) ;
+tau(2) = F_prop(2);
+tau(3) = F_prop(3);
 tau(4) = M_prop(1);  % scaled down by a factor of 10 to match exp. results
 tau(5) = M_prop(2);
 tau(6) = M_prop(3);
 
-% disp('tau')
-% disp(tau)
-% disp('tau_liftdrag')
-% disp(tau_liftdrag)
-% disp('tau_crossflow')
-% disp(tau_crossflow)
-% disp('-C * nu_r')
-% disp(-C * nu_r)
-% disp('- D * nu_r')
-% disp(- D * nu_r)
-% disp('- g')
-% disp(- g)
-% disp('J * nu')
-% disp(J * nu)
-
 xdot = [ Dnu_c + M \ ...
-            (tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r - g)
+            (tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r - g);
          J * nu ]; 
-
-% disp('M')
-% disp(M)
-% 
-% disp('invM*boel')
-% disp(inv(M)*(tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r - g))
-% 
-% 
-% disp('(boel)')
-% disp((tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r - g))
-% 
-% 
-% disp('M\(boel)')
-% disp(M \ (tau + tau_liftdrag + tau_crossflow - C * nu_r - D * nu_r - g))
-% 
-% disp('xdot')
-% disp(xdot)

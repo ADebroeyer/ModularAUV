@@ -6,14 +6,9 @@ S = load("PayloadParameters.mat");
 payload = S.payload;
 
 % declaration of the sizes of the variables for C compilation in SIMULINK
-M = zeros(6,6);
-C = zeros(6,6); 
-D = zeros(6,6); 
-J = zeros(6,6);
-g = zeros(6,1);
-tau_liftdrag = zeros (6,1);
+M = zeros(6,6);C = zeros(6,6); D = zeros(6,6); 
+J = zeros(6,6);g = zeros(6,1);tau_liftdrag = zeros (6,1);
 tau_crossflow = zeros (6,1);
-
 
 U_r = sqrt( nu_r(1)^2 + nu_r(2)^2 + nu_r(3)^2 );  % relative speed (m/s)
 
